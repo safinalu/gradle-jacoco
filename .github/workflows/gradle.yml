@@ -40,7 +40,7 @@ jobs:
         coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
         github_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 90
-        fail_below_threshold: true
+        fail_below_threshold: false
         skip_check_run: false
         publish_only_summary: false
         
