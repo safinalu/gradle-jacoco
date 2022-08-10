@@ -41,10 +41,10 @@ jobs:
         coverage_report_name: Coverage
         coverage_report_title: JaCoCo
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        skip_check_run: false
-        minimum_coverage: 80
-        fail_below_threshold: false
-        publish_only_summary: false
+        skip_check_run: true
+        minimum_coverage: 90
+        fail_below_threshold: true
+        publish_only_summary: true
         
     - name: Upload Jacoco Code Coverage Artifacts
       uses: actions/upload-artifact@v3.1.0
