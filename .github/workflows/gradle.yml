@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  testCoverageRun:
 
     runs-on: ubuntu-latest
 
@@ -18,11 +18,18 @@ jobs:
       with:
         java-version: '18'
         distribution: 'temurin'
+        
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.2.2
       with:
         arguments: jacocoTestReport
-        
+  
+  coveragePost:
+  
+    runs-on: ubuntu-latest
+
+    steps:
+  
     - name: Add Jacoco Report to PR
       id: jacoco
       uses: madrapps/jacoco-report@v1.2
