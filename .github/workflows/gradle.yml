@@ -33,7 +33,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 80 #byte code instructions
         #min-coverage-changed-files: 80
-        title: Jacoco coverage information
+        title: Jacoco coverage information by byte code instructions
   
     - name: JaCoCo Code Coverage Report
       id: jacoco_reporter
