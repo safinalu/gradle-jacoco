@@ -62,4 +62,5 @@ jobs:
         path: build/reports/jacoco/test/jacocoTestReport.xml
         
     - name: Publish Coverager Workflow Build Summary
+      if: always()
       run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY
