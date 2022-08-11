@@ -52,7 +52,7 @@ jobs:
       uses: mshick/add-pr-comment@v1
       with:
         message: 
-          "###Jacoco coverage information by byte code instructions\n|Total Project Coverage|0%|❌|\n|:-|:-:|:-:|"
+          "### Jacoco coverage information by byte code instructions\n|Total Project Coverage|0%|❌|\n|:-|:-:|:-:|"
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
         allow-repeats: true #can repeat the same message
