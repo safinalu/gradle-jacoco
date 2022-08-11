@@ -11,8 +11,6 @@ public final class Utils {
     }
 
     public static String returnOne(){
-        System.out.println("one");
-        System.out.println("one");
         return "one";
     }
 
