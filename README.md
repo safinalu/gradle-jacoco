@@ -24,3 +24,5 @@ Example of Jacoco report:
 
 3. To verify code coverage:
 > *gradle  jacocoTestCoverageVerification*
+
+  
