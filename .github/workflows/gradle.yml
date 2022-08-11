@@ -44,10 +44,10 @@ jobs:
         coverage_report_name: Coverage
         coverage_report_title: JaCoCo
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        skip_check_run: true
+        skip_check_run: false
         minimum_coverage: 80 #byte code instructions
-        fail_below_threshold: true #set true if action has to fail 
-        publish_only_summary: true
+        fail_below_threshold: false #set true if action has to fail 
+        publish_only_summary: false
         
     - name: Upload Jacoco Code Coverage Artifacts
       uses: actions/upload-artifact@v3.1.0
@@ -70,7 +70,7 @@ jobs:
    
     - name: Publish Coverage Overall Summary
       if: github.event_name == 'pull_request'
-          echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
+      run: echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
     
 
 
