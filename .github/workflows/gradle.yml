@@ -46,7 +46,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         skip_check_run: true
         minimum_coverage: 80 #byte code instructions
-        fail_below_threshold: false #set true if has to fail in PR
+        fail_below_threshold: true #set true if has to fail in PR
         publish_only_summary: true
         
     - name: Upload Jacoco Code Coverage Artifacts
