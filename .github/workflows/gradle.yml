@@ -47,7 +47,7 @@ jobs:
         #min-coverage-changed-files: 80
         title: Jacoco coverage information by byte code instructions
         
-    - name: Add Jacoco Report to PR if Jacoco recort doesn't exist
+    - name: Add Jacoco Report to PR if Jacoco report doesn't exist
       if: github.event_name == 'pull_request' && steps.check_files.outputs.files_exists != 'true'
       uses: mshick/add-pr-comment@v1
       with:
