@@ -24,21 +24,43 @@ jobs:
       uses: gradle/gradle-build-action@v2.2.2
       with:
         arguments: jacocoTestReport
+
+    - name: File Existence
+      uses: andstor/file-existence-action@v1.1.0
+      id: check_files
+      with:
+        files: build/reports/jacoco/test/jacocoTestReport.xml
+        
+    - name: File exists
+      if: steps.check_files.outputs.files_exists == 'true'
+      # Only runs if all of the files exists
+      run: echo All files exists!
   
     - name: Add Jacoco Report to PR
       id: jacoco
       uses: madrapps/jacoco-report@v1.2
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.check_files.outputs.files_exists == 'true'
       with:
         paths: build/reports/jacoco/test/jacocoTestReport.xml
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 80 #byte code instructions
         #min-coverage-changed-files: 80
         title: Jacoco coverage information by byte code instructions
+        
+    - name: Add Jacoco Report to PR if Jacoco report doesn't exist
+      if: github.event_name == 'pull_request' && steps.check_files.outputs.files_exists == 'false'
+      uses: mshick/add-pr-comment@v1
+      with:
+        message: 
+          "### Jacoco coverage information by byte code instructions\n|Total Project Coverage|0%|❌|\n|:-|:-:|:-:|"
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
+        allow-repeats: true #can repeat the same message
   
     - name: JaCoCo Code Coverage Report
       id: jacoco_reporter
       uses: PavanMudigonda/jacoco-reporter@v4.5
+      if: steps.check_files.outputs.files_exists == 'true'
       with:
         coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
         coverage_report_name: Coverage
@@ -51,26 +73,27 @@ jobs:
         
     - name: Upload Jacoco Code Coverage Artifacts
       uses: actions/upload-artifact@v3.1.0
-      if: always()
+      if: steps.check_files.outputs.files_exists == 'true'
       with:
         name: code-coverage-report-html
         path: build/reports/jacoco/test/html/
         
     - name: Upload Jacoco Code Coverage Artifacts
       uses: actions/upload-artifact@v3.1.0
-      if: always()
+      if: steps.check_files.outputs.files_exists == 'true'
       with:
         name: code-coverage-report-xml
         path: build/reports/jacoco/test/jacocoTestReport.xml
         
     - name: Publish Coverage Workflow Build Summary
-      if: always()
+      if: steps.check_files.outputs.files_exists == 'true'
       run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY &&
           echo "Coverage by code lines ${{ steps.jacoco_reporter.outputs.coveragePercentage }}" >> $GITHUB_STEP_SUMMARY
    
     - name: Publish Coverage Overall Summary
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.check_files.outputs.files_exists == 'true'
       run: echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
     
-
-
+    - name: Publish Coverage Summary if Jacoco report doesn't exist
+      if: steps.check_files.outputs.files_exists == 'false'
+      run: echo "There are no testing classes. Code coverage is 0%" >> $GITHUB_STEP_SUMMARY
