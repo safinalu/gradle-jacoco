@@ -66,9 +66,11 @@ jobs:
     - name: Publish Coverage Workflow Build Summary
       if: always()
       run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY &&
-          echo "Coverage by code lines ${{ steps.jacoco_reporter.outputs.coveragePercentage }}" >> $GITHUB_STEP_SUMMARY && 
-          if [[ ${{ github.event_name }} == 'pull_request' ]]
-            echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
-          fi      
+          echo "Coverage by code lines ${{ steps.jacoco_reporter.outputs.coveragePercentage }}" >> $GITHUB_STEP_SUMMARY
+   
+    - name: Publish Coverage Overall Summary
+      if: github.event_name == 'pull_request'
+          echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
+    
 
 
