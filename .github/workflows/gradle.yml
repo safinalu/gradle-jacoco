@@ -27,6 +27,7 @@ jobs:
 
     - name: File Existence
       uses: andstor/file-existence-action@v1.1.0
+      id: check_files
       with:
         files: build/reports/jacoco/test/jacocoTestReport.xml
         
