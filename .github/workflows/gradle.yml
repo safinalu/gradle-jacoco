@@ -28,6 +28,7 @@ jobs:
     - name: Add Jacoco Report to PR
       id: jacoco
       uses: madrapps/jacoco-report@v1.2
+      if: github.event_name == 'pull_request'
       with:
         paths: build/reports/jacoco/test/jacocoTestReport.xml
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -43,10 +44,10 @@ jobs:
         coverage_report_name: Coverage
         coverage_report_title: JaCoCo
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        skip_check_run: true
+        skip_check_run: false
         minimum_coverage: 80 #byte code instructions
-        fail_below_threshold: false #set true if has to fail in PR
-        publish_only_summary: true
+        fail_below_threshold: false #set true if action has to fail 
+        publish_only_summary: false
         
     - name: Upload Jacoco Code Coverage Artifacts
       uses: actions/upload-artifact@v3.1.0
@@ -62,9 +63,14 @@ jobs:
         name: code-coverage-report-xml
         path: build/reports/jacoco/test/jacocoTestReport.xml
         
-    - name: Publish Coverager Workflow Build Summary
+    - name: Publish Coverage Workflow Build Summary
       if: always()
       run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY &&
-          echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY &&
           echo "Coverage by code lines ${{ steps.jacoco_reporter.outputs.coveragePercentage }}" >> $GITHUB_STEP_SUMMARY
+   
+    - name: Publish Coverage Overall Summary
+      if: github.event_name == 'pull_request'
+      run: echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY
+    
+
 
