@@ -1,0 +1,70 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  testCoverageRun:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2.2.2
+      with:
+        arguments: jacocoTestReport
+  
+    - name: Add Jacoco Report to PR
+      id: jacoco
+      uses: madrapps/jacoco-report@v1.2
+      with:
+        paths: build/reports/jacoco/test/jacocoTestReport.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 80 #byte code instructions
+        #min-coverage-changed-files: 80
+        title: Jacoco coverage information by byte code instructions
+  
+    - name: JaCoCo Code Coverage Report
+      id: jacoco_reporter
+      uses: PavanMudigonda/jacoco-reporter@v4.5
+      with:
+        coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
+        coverage_report_name: Coverage
+        coverage_report_title: JaCoCo
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        skip_check_run: true
+        minimum_coverage: 80 #byte code instructions
+        fail_below_threshold: false #set true if has to fail in PR
+        publish_only_summary: true
+        
+    - name: Upload Jacoco Code Coverage Artifacts
+      uses: actions/upload-artifact@v3.1.0
+      if: always()
+      with:
+        name: code-coverage-report-html
+        path: build/reports/jacoco/test/html/
+        
+    - name: Upload Jacoco Code Coverage Artifacts
+      uses: actions/upload-artifact@v3.1.0
+      if: always()
+      with:
+        name: code-coverage-report-xml
+        path: build/reports/jacoco/test/jacocoTestReport.xml
+        
+    - name: Publish Coverager Workflow Build Summary
+      if: always()
+      run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY &&
+          echo "Total coverage (byte code instructions) ${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_STEP_SUMMARY &&
+          echo "Coverage by code lines ${{ steps.jacoco_reporter.outputs.coveragePercentage }}" >> $GITHUB_STEP_SUMMARY
+

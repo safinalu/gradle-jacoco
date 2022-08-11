@@ -5,7 +5,7 @@ plugins {
 
 group 'com.nvrsk'
 version '1.0'
-sourceCompatibility = '18'
+//sourceCompatibility = '18'
 
 repositories {
     mavenCentral()
